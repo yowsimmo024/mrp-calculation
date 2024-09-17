@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find MRP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        input[type="number"], input[type="submit"] {
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Find MRP</h1>
+        <form id="mrpForm">
+            <table>
+                <tr>
+                    <th>Input</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Import Cost</td>
+                    <td><input type="number" id="importCost" placeholder="Enter Import Cost" required></td>
+                </tr>
+                <tr>
+                    <td>Business Duty (%)</td>
+                    <td><input type="number" id="businessDuty" value="20" required></td>
+                </tr>
+                <tr>
+                    <td>Excise Duty (%)</td>
+                    <td><input type="number" id="exciseDuty" value="20" required></td>
+                </tr>
+                <tr>
+                    <td>VAT (%)</td>
+                    <td><input type="number" id="vat" value="13" required></td>
+                </tr>
+                <tr>
+                    <td>Overhead Cost (%)</td>
+                    <td><input type="number" id="overhead" value="5" required></td>
+                </tr>
+                <tr>
+                    <td>Marginal Cost (%)</td>
+                    <td><input type="number" id="marginal" value="5" required></td>
+                </tr>
+                <tr>
+                    <td>Discount (%)</td>
+                    <td><input type="number" id="discount" value="5" required></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Calculate MRP">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <h2>MRP Result: <span id="mrpResult">N/A</span></h2>
+    </div>
+    
+    <script>
+        document.getElementById('mrpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get input values
+            const importCost = parseFloat(document.getElementById('importCost').value);
+            const businessDuty = parseFloat(document.getElementById('businessDuty').value) / 100;
+            const exciseDuty = parseFloat(document.getElementById('exciseDuty').value) / 100;
+            const vat = parseFloat(document.getElementById('vat').value) / 100;
+            const overhead = parseFloat(document.getElementById('overhead').value) / 100;
+            const marginal = parseFloat(document.getElementById('marginal').value) / 100;
+            const discount = parseFloat(document.getElementById('discount').value) / 100;
+            
+            // Step 1: Business Duty (B)
+            const businessDutyAmount = importCost * businessDuty;
+            
+            // Step 2: Excise Duty (C)
+            const exciseDutyAmount = (importCost + businessDutyAmount) * exciseDuty;
+            
+            // Step 3: VAT
+            const vatAmount = (importCost + businessDutyAmount + exciseDutyAmount) * vat;
+            
+            // Step 4: Landing Cost
+            const landingCost = importCost + businessDutyAmount + exciseDutyAmount + vatAmount;
+            
+            // Step 5: Overhead Cost
+            const overheadCost = landingCost * overhead;
+            
+            // Step 6: Marginal Cost
+            const marginalCost = landingCost * marginal;
+            
+            // Step 7: Total Cost before discount
+            const totalCostBeforeDiscount = landingCost + overheadCost + marginalCost;
+            
+            // Step 8: Discount
+            const discountAmount = totalCostBeforeDiscount * discount;
+            
+            // Step 9: Final MRP
+            const finalMRP = totalCostBeforeDiscount - discountAmount;
+            
+            // Display MRP result
+            document.getElementById('mrpResult').textContent = finalMRP.toFixed(2);
+        });
+    </script>
+</body>
+</html>
